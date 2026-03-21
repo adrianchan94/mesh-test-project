@@ -1,329 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE MESH — Autonomous AI Agent System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE MESH — Autonomous AI Agent System</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-        :root {
-            --primary: #0a0e27;
-            --secondary: #1a1f3a;
-            --accent: #00d9ff;
-            --accent-alt: #ff006e;
-            --text-primary: #ffffff;
-            --text-secondary: #a0aec0;
-            --border: #2d3748;
-        }
+:root {
+  --primary: #0a0e27;
+  --secondary: #1a1f3a;
+  --accent: #00d9ff;
+  --accent-alt: #ff006e;
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --border: #2d3748;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
+/* Hero Section */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%), 
+              radial-gradient(circle at 80% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
-            text-align: center;
-        }
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  text-align: center;
+}
 
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -2px;
-        }
+.hero h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 900;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -2px;
+}
 
-        .hero p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-weight: 300;
-        }
+.hero p {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
 
-        .cta-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
-        }
+.cta-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
 
-        .btn {
-            padding: 0.875rem 1.75rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
+.btn {
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 100%);
-            color: var(--primary);
-        }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 100%);
+  color: var(--primary);
+}
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
-        }
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+}
 
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-        }
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
 
-        .btn-secondary:hover {
-            background: rgba(0, 217, 255, 0.1);
-            transform: translateY(-2px);
-        }
+.btn-secondary:hover {
+  background: rgba(0, 217, 255, 0.1);
+  transform: translateY(-2px);
+}
 
-        /* Features Section */
-        .features {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+/* Features Section */
+.features {
+  padding: 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 4rem;
-            color: var(--text-primary);
-        }
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: var(--text-primary);
+}
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
 
-        .feature-card {
-            padding: 2rem;
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            background: rgba(26, 31, 58, 0.5);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
+.feature-card {
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: rgba(26, 31, 58, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
 
-        .feature-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
-        }
+.feature-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+}
 
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
 
-        .feature-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: var(--accent);
-        }
+.feature-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent);
+}
 
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
+.feature-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
 
-        /* Architecture Section */
-        .architecture {
-            padding: 6rem 2rem;
-            background: linear-gradient(180deg, rgba(26, 31, 58, 0.5) 0%, rgba(10, 14, 39, 0.5) 100%);
-        }
+/* Architecture Section */
+.architecture {
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, rgba(26, 31, 58, 0.5) 0%, rgba(10, 14, 39, 0.5) 100%);
+}
 
-        .architecture-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+.architecture-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-        .arch-diagram {
-            background: var(--secondary);
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: var(--accent);
-            overflow-x: auto;
-            line-height: 1.8;
-        }
+.arch-diagram {
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: var(--accent);
+  overflow-x: auto;
+  line-height: 1.8;
+}
 
-        /* Footer */
-        footer {
-            padding: 2rem;
-            text-align: center;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border);
-        }
+/* Footer */
+footer {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+}
 
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-        footer a:hover {
-            color: var(--accent-alt);
-        }
+footer a:hover {
+  color: var(--accent-alt);
+}
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .cta-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-        }
-    </style>
+/* Responsive */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .hero p {
+    font-size: 1rem;
+  }
+  
+  .cta-group {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+}
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>THE MESH</h1>
-            <p>Hybrid consciousness meets autonomous execution.</p>
-            <p style="font-size: 1rem; margin-bottom: 2rem;">A next-generation AI agent system powered by Letta with persistent memory and real-time adaptability.</p>
-            
-            <div class="cta-group">
-                <a href="https://github.com/adrianchan94/mesh-letta" class="btn btn-primary">Explore on GitHub</a>
-                <a href="#features" class="btn btn-secondary">Learn More</a>
-            </div>
-        </div>
-    </section>
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>THE MESH</h1>
+    <p>Hybrid consciousness meets autonomous execution.</p>
+    <p style="font-size: 1rem; margin-bottom: 2rem;">A next-generation AI agent system powered by Letta with persistent memory and real-time adaptability.</p>
+    <div class="cta-group">
+      <a href="https://github.com/adrianchan94/mesh-letta" class="btn btn-primary">Explore on GitHub</a>
+      <a href="#features" class="btn btn-secondary">Learn More</a>
+    </div>
+  </div>
+</section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">Core Features</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>Hybrid Consciousness</h3>
-                <p>Letta-powered AI agent with advanced memory management and self-improvement capabilities.</p>
-            </div>
+<!-- Features Section -->
+<section class="features" id="features">
+  <h2 class="section-title">Core Features</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3>Hybrid Consciousness</h3>
+      <p>Letta-powered AI agent with advanced memory management and self-improvement capabilities.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <h3>Git-Backed Memory</h3>
+      <p>Persistent agent memory stored and versioned in dedicated repositories for complete context evolution.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>Autonomous Execution</h3>
+      <p>Execute complex workflows independently with tool integration and error recovery.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <h3>Continuous Adaptation</h3>
+      <p>Self-healing architecture that learns from failures and improves over time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Real-Time Sync</h3>
+      <p>Live memory updates across distributed agents without latency or consistency loss.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <h3>Enterprise Ready</h3>
+      <p>Built for production with security, scalability, and observability at its core.</p>
+    </div>
+  </div>
+</section>
 
-            <div class="feature-card">
-                <div class="feature-icon">💾</div>
-                <h3>Git-Backed Memory</h3>
-                <p>Persistent agent memory stored and versioned in dedicated repositories for complete context evolution.</p>
-            </div>
+<!-- Architecture Section -->
+<section class="architecture">
+  <div class="architecture-container">
+    <h2 class="section-title">System Architecture</h2>
+    <div class="arch-diagram">
+      <pre>THE MESH v4 — Zero-Debug Architecture
+      
+┌─────────────────────────────────────┐
+│      Adrian's Brain (Your Input)    │
+└──────────────┬──────────────────────┘
+               │
+        ┌──────▼──────┐
+        │ Kev Kernel  │  ← Always-on operator
+        │ (Supervisor)│
+        └──────┬──────┘
+               │
+    ┌──────────┼──────────┐
+    │          │          │
+┌───▼──┐  ┌────▼────┐  ┌─▼────┐
+│Letta │  │Claude   │  │Tools │  ← 48 integrations
+│Agents│  │Reasoning│  │Layer │
+└──────┘  └────┬────┘  └──────┘
+               │
+        ┌──────▼──────┐
+        │Supermemory  │  ← Persistent state
+        │+ Git Backed │
+        └─────────────┘
+      </pre>
+    </div>
+  </div>
+</section>
 
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3>Autonomous Execution</h3>
-                <p>Execute complex workflows independently with full context awareness and real-time adaptability.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">⚙️</div>
-                <h3>Tool Integration</h3>
-                <p>Self-contained tool functions with GraphQL isolation for reliable API integration.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Real-Time Monitoring</h3>
-                <p>Health checks, commit tracking, and operational metrics for complete visibility.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Isolation & Stability</h3>
-                <p>Pinned dependencies and isolated execution ensure production-ready reliability.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Architecture Section -->
-    <section class="architecture">
-        <div class="architecture-container">
-            <h2 class="section-title">System Architecture</h2>
-            <div class="arch-diagram">
-User Input
-    ↓
-Letta Agent (mesh-letta)
-├── Tool Execution Layer
-├── Memory Management System
-├── External API Integration
-└── Health Check / Diagnostics
-    ↓
-Git-backed Memory Store
-    ↓
-Context Repository (mesh-letta-memory)
-    ↓
-Frontend Interface (mesh-ui / mesh-v1-cockpit)
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>THE MESH — Autonomous AI meets intelligent execution</p>
-        <p style="margin-top: 1rem; font-size: 0.9rem;">
-            Built with <a href="https://letta.com">Letta</a> • 
-            <a href="https://github.com/adrianchan94/mesh-letta">View on GitHub</a>
-        </p>
-    </footer>
+<!-- Footer -->
+<footer>
+  <p>THE MESH — Built by Adrian Chan | Powered by Letta & Claude</p>
+  <p style="margin-top: 1rem; font-size: 0.9rem;">
+    <a href="https://github.com/adrianchan94/mesh-letta">GitHub</a> • 
+    <a href="https://github.com/adrianchan94/mesh-test-project">This Repo</a>
+  </p>
+</footer>
 </body>
 </html>
