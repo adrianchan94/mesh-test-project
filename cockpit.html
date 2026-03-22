@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE MESH Cockpit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-darker: #050810;
+            --bg-card: #141829;
+            --accent-cyan: #00d9ff;
+            --accent-purple: #a855f7;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --text-primary: #f0f4f8;
+            --text-secondary: #b0b8c8;
+            --text-muted: #6b7280;
+            --border: #1e2139;
+            --border-light: #2a3050;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            line-height: 1.4;
+            overflow: hidden;
+        }
+
+        .cockpit-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+        }
+
+        /* Header */
+        .cockpit-header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(20, 24, 41, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .cockpit-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.05em;
+        }
+
+        .system-status {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main grid layout */
+        .cockpit-main {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(20, 24, 41, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.05em;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Agent cards */
+        .agent-card {
+            background: rgba(26, 31, 58, 0.6);
+            border: 1px solid var(--border-light);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 6px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .agent-card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(26, 31, 58, 0.8);
+            transform: translateX(4px);
+        }
+
+        .agent-card.active {
+            border-left-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .agent-card.error {
+            border-left-color: var(--accent-red);
+            background: rgba(255, 51, 102, 0.05);
+        }
+
+        .agent-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .agent-status {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .agent-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        .agent-card.error .agent-status-dot {
+            background: var(--accent-red);
+            animation: none;
+        }
+
+        .agent-metric {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Message stream */
+        .message-item {
+            background: rgba(10, 14, 39, 0.5);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-content {
+            color: var(--text-secondary);
+        }
+
+        .message-content.success {
+            color: var(--accent-green);
+        }
+
+        .message-content.error {
+            color: var(--accent-red);
+        }
+
+        /* Decision queue */
+        .decision-item {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid var(--accent-purple);
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .decision-title {
+            color: var(--accent-purple);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .decision-desc {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .metric-box {
+            background: rgba(10, 14, 39, 0.5);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        /* Scrollbar */
+        .panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: var(--accent-cyan);
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1920px) {
+            .cockpit-wrapper {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cockpit-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .cockpit-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .cockpit-main {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cockpit-wrapper">
+        <!-- Header -->
+        <div class="cockpit-header">
+            <div class="cockpit-title">⚡ THE MESH</div>
+            <div class="system-status">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>Kernel: Active</span>
+                </div>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>7 Agents Online</span>
+                </div>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>61 Tools Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main panels -->
+        <div class="cockpit-main">
+            <!-- Left column: Agents -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">ACTIVE AGENTS</div>
+                </div>
+                <div class="panel-content">
+                    <div class="agent-card active">
+                        <div class="agent-name">kev</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Kernel: Routing</span>
+                        </div>
+                        <div class="agent-metric">Uptime: 847h 23m</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">claude-mesh</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Executing</span>
+                        </div>
+                        <div class="agent-metric">Tasks: 142 | Avg latency: 1.2s</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">github-agent</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Ready</span>
+                        </div>
+                        <div class="agent-metric">Repos: 12 | Status: 200</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">vercel-agent</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Ready</span>
+                        </div>
+                        <div class="agent-metric">Deployments: 34 | Last: 2h ago</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">shopify-agent</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Ready</span>
+                        </div>
+                        <div class="agent-metric">Orders: 47 | Revenue: $1.77K</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">spotify-agent</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Auth: Expired</span>
+                        </div>
+                        <div class="agent-metric">Status: 401 (Refresh needed)</div>
+                    </div>
+
+                    <div class="agent-card active">
+                        <div class="agent-name">research-agent</div>
+                        <div class="agent-status">
+                            <div class="agent-status-dot"></div>
+                            <span>Ready</span>
+                        </div>
+                        <div class="agent-metric">Queries: 23 | Sources indexed: 156</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle column: Decision Queue & Messages -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">DECISION QUEUE</div>
+                </div>
+                <div class="panel-content">
+                    <div class="decision-item">
+                        <div class="decision-title">MESH v4 Cockpit Rebuild</div>
+                        <div class="decision-desc">Status: In progress. Awwwards-quality UI, real-time agent cards, single-page HTML.</div>
+                    </div>
+
+                    <div class="decision-item">
+                        <div class="decision-title">Telegram Integration</div>
+                        <div class="decision-desc">Status: Blocked. TELEGRAM_BOT_TOKEN missing from environment.</div>
+                    </div>
+
+                    <div class="decision-item">
+                        <div class="decision-title">Supermemory Lag</div>
+                        <div class="decision-desc">Status: Acknowledged. 2-hour indexing gap. Awaiting force-index decision.</div>
+                    </div>
+
+                    <div class="decision-item">
+                        <div class="decision-title">Spotify Auth Refresh</div>
+                        <div class="decision-desc">Status: Pending. OAuth token expired. Need credential rotation.</div>
+                    </div>
+
+                    <div class="decision-item">
+                        <div class="decision-title">Inter-Agent Messaging</div>
+                        <div class="decision-desc">Status: Known issue. send_message_to_agent is unreliable. Context loops detected.</div>
+                    </div>
+
+                    <div class="decision-item">
+                        <div class="decision-title">Morning Briefing (09:00 HKT)</div>
+                        <div class="decision-desc">Status: Complete. 10 overnight orders, $1.77K revenue. All systems green.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: Metrics & Stream -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">SYSTEM METRICS</div>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value">847h</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Tasks/Day</div>
+                            <div class="metric-value">342</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Avg Latency</div>
+                            <div class="metric-value">1.2s</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Tool Health</div>
+                            <div class="metric-value">59/61</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                        <div class="panel-title" style="font-size: 0.95rem; margin-bottom: 0.75rem;">ACTIVITY STREAM</div>
+                        
+                        <div class="message-item">
+                            <div class="message-time">01:18 HKT</div>
+                            <div class="message-content success">✓ Cockpit rebuild committed (718cc39)</div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-time">01:15 HKT</div>
+                            <div class="message-content">Claude received build spec</div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-time">01:09 HKT</div>
+                            <div class="message-content success">✓ Landing page deployed</div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-time">01:03 HKT</div>
+                            <div class="message-content success">✓ Morning briefing generated</div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-time">00:58 HKT</div>
+                            <div class="message-content">Health check: 7 agents, 59/61 tools</div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-time">2026-03-21 23:40 UTC</div>
+                            <div class="message-content error">⚠ Spotify 401 — auth refresh needed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate real-time updates
+        setInterval(() => {
+            const agentCards = document.querySelectorAll('.agent-card');
+            agentCards.forEach(card => {
+                if (Math.random() > 0.95) {
+                    card.style.borderLeftColor = 'var(--accent-purple)';
+                    setTimeout(() => {
+                        card.style.borderLeftColor = 'var(--accent-cyan)';
+                    }, 200);
+                }
+            });
+        }, 3000);
+
+        // Add current timestamp to header
+        const updateTime = () => {
+            const now = new Date();
+            const hkt = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }));
+            const timeStr = hkt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+            const statusBadges = document.querySelectorAll('.status-badge');
+            if (statusBadges[2]) {
+                statusBadges[2].textContent = `⏱ ${timeStr} HKT`;
+            }
+        };
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
