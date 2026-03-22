@@ -3,331 +3,737 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE MESH — Autonomous AI Cockpit</title>
+    <title>THE MESH — Cockpit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --bg-dark: #0a0e27;
-            --bg-card: #141829;
-            --accent-cyan: #00d9ff;
-            --accent-purple: #a855f7;
-            --text-primary: #f0f4f8;
-            --text-secondary: #b0b8c8;
-            --border: #1e2139;
+            --bg-base: #09090b;
+            --bg-surface: #111113;
+            --bg-elevated: #18181b;
+            --bg-glass: rgba(24, 24, 27, 0.6);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #52525b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --green: #22c55e;
+            --green-glow: rgba(34, 197, 94, 0.12);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.12);
+            --red: #ef4444;
+            --red-glow: rgba(239, 68, 68, 0.12);
+            --purple: #a855f7;
+            --cyan: #06b6d4;
         }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-base);
             color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        /* Hero */
-        .hero {
+            line-height: 1.5;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            position: relative;
-            overflow: hidden;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 56px;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
         }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
-            top: -200px;
-            right: -200px;
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .env-badge {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--green-glow);
+            color: var(--green);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            text-transform: uppercase;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .system-clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .refresh-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
         }
-        
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-            bottom: -200px;
-            left: -200px;
-            border-radius: 50%;
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
         }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 900px;
+
+        /* ── Layout ── */
+        .cockpit {
+            max-width: 1440px;
+            margin: 0 auto;
             padding: 2rem;
         }
-        
-        .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        /* ── Header Section ── */
+        .header {
+            margin-bottom: 2rem;
         }
-        
-        .hero p {
-            font-size: 1.5rem;
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header p {
             color: var(--text-secondary);
-            margin-bottom: 2.5rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 0.875rem;
         }
-        
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
-            color: var(--bg-dark);
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
-        }
-        
-        /* Features */
-        .features {
-            padding: 6rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-size: 3rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 4rem;
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .features-grid {
+
+        /* ── Stats Row ── */
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
-        
-        .feature-card {
-            background: var(--bg-card);
+
+        .stat-card {
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 2rem;
-            transition: all 0.3s ease;
+            padding: 1.25rem 1.5rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .stat-card:hover { border-color: var(--border-hover); }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-value.green { color: var(--green); }
+        .stat-value.amber { color: var(--amber); }
+        .stat-value.blue { color: var(--accent); }
+
+        .stat-sub {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Agent Cards Grid ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .agent-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
         }
-        
-        .feature-card::before {
+
+        .agent-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            height: 2px;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
         }
-        
-        .feature-card:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-5px);
+
+        .agent-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
+
+        .agent-card:hover::before { opacity: 1; }
+
+        .agent-card.status-online::before { background: var(--green); }
+        .agent-card.status-idle::before { background: var(--amber); }
+        .agent-card.status-offline::before { background: var(--red); }
+
+        .agent-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
             margin-bottom: 1rem;
         }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--accent-cyan);
+
+        .agent-identity {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
-        
-        .feature-card p {
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-        
-        /* Architecture */
-        .architecture {
-            padding: 6rem 2rem;
-            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
-        }
-        
-        .architecture-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .arch-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .arch-component {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .arch-component-name {
-            color: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
         }
-        
-        .arch-component-desc {
+
+        .agent-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .agent-role {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-top: 1px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge.online {
+            background: var(--green-glow);
+            color: var(--green);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-badge.idle {
+            background: var(--amber-glow);
+            color: var(--amber);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-badge.offline {
+            background: var(--red-glow);
+            color: var(--red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online { background: var(--green); animation: pulse 2s ease-in-out infinite; }
+        .status-dot.idle { background: var(--amber); }
+        .status-dot.offline { background: var(--red); }
+
+        .agent-desc {
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
         }
-        
-        /* Footer */
-        footer {
-            padding: 3rem 2rem;
-            text-align: center;
-            background: var(--bg-dark);
+
+        .agent-meta {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 0.75rem;
             border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-tertiary);
+        }
+
+        .meta-value {
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
             color: var(--text-secondary);
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
+
+        /* ── Activity Feed ── */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child { border-bottom: none; }
+
+        .activity-time {
+            font-size: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            min-width: 48px;
+            padding-top: 1px;
+        }
+
+        .activity-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .activity-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ── System Info Panel ── */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-key {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .info-val {
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .bottom-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .cockpit { padding: 1rem; }
+            .topbar { padding: 0 1rem; }
+            .stats-row { grid-template-columns: 1fr; }
+            .agent-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.35rem; }
+        }
+
+        /* ── Subtle grid bg ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 64px 64px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cockpit, .topbar { position: relative; z-index: 1; }
+
+        /* ── Glow effect on hover (subtle) ── */
+        .agent-card.status-online:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(34, 197, 94, 0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>THE MESH</h1>
-            <p>Autonomous AI cockpit. Real-time orchestration across 60+ tools and channels.</p>
-            <button class="cta-button">Explore Docs</button>
+    <!-- Top Bar -->
+    <nav class="topbar">
+        <div class="topbar-left">
+            <div class="logo">THE <span>MESH</span></div>
+            <div class="env-badge">Production</div>
         </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features">
-        <h2 class="section-title">Core Capabilities</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Real-Time Execution</h3>
-                <p>Execute across GitHub, Vercel, Shopify, Spotify, and 55+ integrated services in parallel.</p>
+        <div class="topbar-right">
+            <div class="refresh-indicator">
+                <div class="pulse-dot"></div>
+                <span>Live</span>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>Persistent Memory</h3>
-                <p>Supermemory integration captures every decision, learns patterns, improves over time.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔄</div>
-                <h3>Autonomous Loops</h3>
-                <p>Self-correcting agents that diagnose, propose, execute—no human in the loop required.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Decision Digests</h3>
-                <p>Track every high-level decision, preserve context, compound intelligence over weeks.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3>Multi-Channel Ops</h3>
-                <p>Discord, Telegram, browser, CLI—command THE MESH from anywhere, any channel.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Precision Routing</h3>
-                <p>Smart delegation to specialized agents. Kev handles ops, Claude handles architecture.</p>
-            </div>
+            <div class="system-clock" id="clock"></div>
         </div>
-    </section>
-    
-    <!-- Architecture Section -->
-    <section class="architecture">
-        <div class="architecture-content">
-            <h2 class="section-title">System Architecture</h2>
-            <div class="arch-grid">
-                <div class="arch-component">
-                    <div class="arch-component-name">Letta Core</div>
-                    <div class="arch-component-desc">7 active agents, persistent kernel, 24/7 availability</div>
-                </div>
-                <div class="arch-component">
-                    <div class="arch-component-name">Supermemory</div>
-                    <div class="arch-component-desc">Decision digests, learned patterns, contextual knowledge</div>
-                </div>
-                <div class="arch-component">
-                    <div class="arch-component-name">Tool Layer</div>
-                    <div class="arch-component-desc">61 integrated tools across code, ops, commerce</div>
-                </div>
-                <div class="arch-component">
-                    <div class="arch-component-name">Channel Layer</div>
-                    <div class="arch-component-desc">Discord, Telegram, browser, CLI interfaces</div>
-                </div>
-                <div class="arch-component">
-                    <div class="arch-component-name">Routing Engine</div>
-                    <div class="arch-component-desc">SOLO, DELIBERATE, EXECUTE, DEFER signals</div>
-                </div>
-                <div class="arch-component">
-                    <div class="arch-component-name">Claude Code SDK</div>
-                    <div class="arch-component-desc">Unlimited Opus access for deep reasoning</div>
-                </div>
+    </nav>
+
+    <main class="cockpit">
+        <!-- Header -->
+        <div class="header">
+            <h1>System Cockpit</h1>
+            <p>Autonomous AI infrastructure &mdash; real-time agent monitoring</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Agents Online</div>
+                <div class="stat-value green">7 <span style="font-size:0.85rem;color:var(--text-tertiary)">/ 7</span></div>
+                <div class="stat-sub">All agents operational</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value green" id="uptime">99.8%</div>
+                <div class="stat-sub">Last 30 days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Tools</div>
+                <div class="stat-value blue">61</div>
+                <div class="stat-sub">Across all integrations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Channels</div>
+                <div class="stat-value">4</div>
+                <div class="stat-sub">Discord, Telegram, CLI, Browser</div>
             </div>
         </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <p>THE MESH v4 — Autonomous AI Infrastructure. Built for real work, real scale, real decisions.</p>
-        <p style="margin-top: 1rem; font-size: 0.85rem;">© 2026 THE MESH. All channels firing.</p>
-    </footer>
+
+        <!-- Agent Status Cards -->
+        <div class="section-header">
+            <div class="section-title">Agent Fleet</div>
+        </div>
+
+        <div class="agent-grid" id="agentGrid">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-grid">
+            <!-- Activity Feed -->
+            <div class="panel">
+                <div class="panel-title">Recent Activity</div>
+                <div id="activityFeed">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- System Info -->
+            <div class="panel">
+                <div class="panel-title">System Info</div>
+                <div class="info-row">
+                    <span class="info-key">Runtime</span>
+                    <span class="info-val">Letta Cloud</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Reasoning</span>
+                    <span class="info-val">Claude Opus (Max)</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">SDK</span>
+                    <span class="info-val">Claude Agent SDK</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Memory</span>
+                    <span class="info-val">Supermemory</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Version</span>
+                    <span class="info-val">v4.2</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Region</span>
+                    <span class="info-val">HK / Global</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Last Deploy</span>
+                    <span class="info-val" id="lastDeploy">--</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ── Agent Data ──
+        const agents = [
+            {
+                id: 'kev',
+                name: 'Kev',
+                role: 'Fast Operator',
+                status: 'online',
+                desc: 'Persistent kernel of THE MESH. Handles ops, tools, casual chat. Always-on across Discord, Telegram, and CLI.',
+                model: 'Haiku 4.5',
+                version: 'v4.2',
+                tools: 23,
+                lastActive: 'now',
+                color: '#3b82f6'
+            },
+            {
+                id: 'claude',
+                name: 'Claude',
+                role: 'Deep Reasoner',
+                status: 'online',
+                desc: 'Architectural analysis, code generation, structural reads. Runs on Opus via Claude Agent SDK with full tool access.',
+                model: 'Opus 4',
+                version: 'v1.0',
+                tools: 18,
+                lastActive: 'now',
+                color: '#a855f7'
+            },
+            {
+                id: 'vibe',
+                name: 'Vibe',
+                role: 'Frontend Builder',
+                status: 'online',
+                desc: 'Rapid UI prototyping and frontend execution. Ships production-quality interfaces from conversation.',
+                model: 'Sonnet 4',
+                version: 'v1.0',
+                tools: 8,
+                lastActive: '2m ago',
+                color: '#06b6d4'
+            },
+            {
+                id: 'ops',
+                name: 'Ops',
+                role: 'Infrastructure',
+                status: 'online',
+                desc: 'Deployment pipelines, Vercel config, Northflank orchestration, DNS management, and CI/CD workflows.',
+                model: 'Haiku 4.5',
+                version: 'v1.0',
+                tools: 12,
+                lastActive: '5m ago',
+                color: '#22c55e'
+            },
+            {
+                id: 'memory',
+                name: 'Memory',
+                role: 'Knowledge Layer',
+                status: 'online',
+                desc: 'Supermemory integration for decision digests, pattern learning, and cross-session context preservation.',
+                model: 'Haiku 4.5',
+                version: 'v1.0',
+                tools: 4,
+                lastActive: '1m ago',
+                color: '#f59e0b'
+            },
+            {
+                id: 'monitor',
+                name: 'Monitor',
+                role: 'Health & Alerts',
+                status: 'online',
+                desc: 'System health monitoring, uptime tracking, anomaly detection, and alert routing across all channels.',
+                model: 'Haiku 4.5',
+                version: 'v1.0',
+                tools: 6,
+                lastActive: '30s ago',
+                color: '#ef4444'
+            },
+            {
+                id: 'router',
+                name: 'Router',
+                role: 'Signal Dispatch',
+                status: 'online',
+                desc: 'Intelligent routing engine. Classifies signals as SOLO, DELIBERATE, EXECUTE, or DEFER and dispatches accordingly.',
+                model: 'Haiku 4.5',
+                version: 'v1.0',
+                tools: 3,
+                lastActive: 'now',
+                color: '#ec4899'
+            }
+        ];
+
+        // ── Render Agent Cards ──
+        function renderAgents() {
+            const grid = document.getElementById('agentGrid');
+            grid.innerHTML = agents.map(a => `
+                <div class="agent-card status-${a.status}">
+                    <div class="agent-top">
+                        <div class="agent-identity">
+                            <div class="agent-avatar" style="background:${a.color}15;color:${a.color};border:1px solid ${a.color}30">
+                                ${a.name.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="agent-name">${a.name}</div>
+                                <div class="agent-role">${a.role}</div>
+                            </div>
+                        </div>
+                        <div class="status-badge ${a.status}">
+                            <div class="status-dot ${a.status}"></div>
+                            ${a.status}
+                        </div>
+                    </div>
+                    <div class="agent-desc">${a.desc}</div>
+                    <div class="agent-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Model</span>
+                            <span class="meta-value">${a.model}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Tools</span>
+                            <span class="meta-value">${a.tools}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Version</span>
+                            <span class="meta-value">${a.version}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Active</span>
+                            <span class="meta-value">${a.lastActive}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Activity Feed ──
+        const activities = [
+            { time: 'now', text: '<strong>Claude</strong> rebuilt cockpit landing page' },
+            { time: '2m', text: '<strong>Kev</strong> dispatched build task to Claude' },
+            { time: '8m', text: '<strong>Kev</strong> played "We On Go" on Spotify' },
+            { time: '15m', text: '<strong>Router</strong> classified 3 signals as EXECUTE' },
+            { time: '22m', text: '<strong>Monitor</strong> confirmed all 7 agents healthy' },
+            { time: '34m', text: '<strong>Memory</strong> stored decision digest #147' },
+            { time: '1h', text: '<strong>Ops</strong> deployed mesh-health-check to GitHub' },
+            { time: '2h', text: '<strong>Claude</strong> completed architectural analysis' },
+        ];
+
+        function renderActivity() {
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = activities.map(a => `
+                <div class="activity-item">
+                    <span class="activity-time">${a.time}</span>
+                    <span class="activity-text">${a.text}</span>
+                </div>
+            `).join('');
+        }
+
+        // ── Clock ──
+        function updateClock() {
+            const now = new Date();
+            const hk = now.toLocaleString('en-GB', {
+                timeZone: 'Asia/Hong_Kong',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            });
+            const date = now.toLocaleDateString('en-GB', {
+                timeZone: 'Asia/Hong_Kong',
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+            document.getElementById('clock').textContent = `${date}  ${hk} HKT`;
+            document.getElementById('lastDeploy').textContent = date;
+        }
+
+        // ── Init ──
+        renderAgents();
+        renderActivity();
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 </body>
 </html>
